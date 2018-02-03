@@ -1,19 +1,19 @@
 CHARMC?=../../../../bin/charmc $(OPTS)
 
-OBJS = hello.o
+OBJS = whereami.o
 
-all: hello
+all: whereami
 
-hello: $(OBJS)
-	$(CHARMC) -language charm++ -o hello $(OBJS)
+whereami: $(OBJS)
+	$(CHARMC) -language charm++ -o whereami $(OBJS)
 
-hello.decl.h: hello.ci
-	$(CHARMC)  hello.ci
+whereami.decl.h: whereami.ci
+	$(CHARMC)  whereami.ci
 
 clean:
-	rm -f *.decl.h *.def.h conv-host *.o hello charmrun
+	rm -f *.decl.h *.def.h conv-host *.o whereami charmrun
 
-hello.o: hello.C hello.decl.h
-	$(CHARMC) -c hello.C
+whereami.o: whereami.C whereami.decl.h
+	$(CHARMC) -c whereami.C
 
 

@@ -3,12 +3,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
-#include "hello.decl.h"
-
-/*readonly*/ CProxy_Main mainProxy;
-/*readonly*/ CProxy_Hello arrProxy;
-/*readonly*/ int nElements;
-
+#include "whereami.decl.h"
 
 int get_cpu_id()
 {
@@ -45,7 +40,7 @@ public:
     CkCallback initCB(CkIndex_Main::done(), thisProxy);
     opts.setInitCallback(initCB);
     opts.setStaticInsertion(true);
-    arrProxy = CProxy_Hello::ckNew(opts);
+    CProxy_Where::ckNew(opts);
   };
 
   void done(void) {
@@ -54,17 +49,17 @@ public:
 };
 
 /*array [1D]*/
-class Hello : public CBase_Hello
+class Where : public CBase_Where
 {
 public:
-  Hello()
+  Where()
   {
     char hostname[HOST_NAME_MAX];
     gethostname(hostname, HOST_NAME_MAX);
     CkPrintf("[%d] on PE %d, host %s, cpu %d\n",thisIndex, CkMyPe(), hostname, get_cpu_id());
   }
 
-  Hello(CkMigrateMessage *m) {}
+  Where(CkMigrateMessage *m) {}
   };
 
-#include "hello.def.h"
+#include "whereami.def.h"
