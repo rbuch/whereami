@@ -31,19 +31,37 @@ int get_cpu_id()
 class Main : public CBase_Main
 {
 public:
+
+  int numPes, msgsRcvd;
+  int* cpuArray;
+  std::string* hostnameArray;
+  
   Main(CkArgMsg* m)
   {
-    int numPes = CkNumPes();
+    numPes = CkNumPes();
+    msgsRcvd = 0;
 
+    cpuArray = new int[numPes];
+    hostnameArray = new std::string[numPes];
+    
     CkArrayOptions opts;
     opts.setNumInitial(numPes);
-    CkCallback initCB(CkIndex_Main::done(), thisProxy);
-    opts.setInitCallback(initCB);
     opts.setStaticInsertion(true);
-    CProxy_Where::ckNew(opts);
-  };
+    CProxy_Where::ckNew(thisProxy, opts);
+  }
+
+  void receiveCPU(int sender, int cpuId, std::string hostname) {
+    cpuArray[sender] = cpuId;
+    hostnameArray[sender] = hostname;
+    if (++msgsRcvd == numPes) {
+      thisProxy.done();
+    }
+  }
 
   void done(void) {
+    for (int i = 0; i < numPes; ++i) {
+      CkPrintf("[%d]: %d, %s\n", i, cpuArray[i], hostnameArray[i].c_str());
+    }
     CkExit();
   }
 };
@@ -52,14 +70,14 @@ public:
 class Where : public CBase_Where
 {
 public:
-  Where()
+  Where(CProxy_Main mainProxy)
   {
     char hostname[HOST_NAME_MAX];
     gethostname(hostname, HOST_NAME_MAX);
-    CkPrintf("[%d] on PE %d, host %s, cpu %d\n",thisIndex, CkMyPe(), hostname, get_cpu_id());
+    mainProxy.receiveCPU(thisIndex, get_cpu_id(), std::string(hostname));
   }
 
   Where(CkMigrateMessage *m) {}
-  };
+};
 
 #include "whereami.def.h"

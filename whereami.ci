@@ -1,10 +1,11 @@
 mainmodule whereami {
   mainchare Main {
     entry Main(CkArgMsg *m);
+    entry void receiveCPU(int sender, int cpuId, std::string hostname);
     entry void done(void);
   };
 
   array [1D] Where {
-    entry Where(void);
+    entry Where(CProxy_Main mainProxy);
   };        	
 };
