@@ -36,7 +36,7 @@ public:
 
   void done(void) {
     for (int i = 0; i < numPes; ++i) {
-      CkPrintf("[%d]: %d, %s\n", i, cpuArray[i], hostnameArray[i].c_str());
+      CkPrintf("[%3d]: %3d, %s\n", i, cpuArray[i], hostnameArray[i].c_str());
     }
     CkExit();
   }
